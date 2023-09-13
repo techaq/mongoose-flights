@@ -10,9 +10,9 @@ class Index extends React.Component {
         <ul>
           {flight.map((flight, i) => {
             return (
-              <li
-                key={i}
-              >{`${flight.airline} ${flight.flightNo} ${flight.departs}`}</li>
+              <li key={i}>{`${flight.airline} ${
+                flight.flightNo
+              } ${flight.departs.toLocaleString()}`}</li>
             );
           })}
         </ul>
