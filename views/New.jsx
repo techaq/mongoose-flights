@@ -1,29 +1,32 @@
+// NewDestination.jsx
 const React = require("react");
 
 class New extends React.Component {
   render() {
-    const date = new Date();
-    const futureDate = date.getDate() + 367;
-    date.setDate(futureDate);
-    const defaultValue = date.toLocaleDateString("en-CA");
+    const { flight } = this.props;
+
     return (
       <div>
-        <h1>Add New Flight</h1>
-        <form action="/flights" method="POST">
-          Airline <input type="text" name="airline" />
+        <h2>Add Destination to Flight </h2>
+        <form action={`/flights/${flight._id}/destinations`} method="POST">
+          Airport:
+          <select name="airport">
+            <option value="AUS">
+              Austin-Bergstrom International Airport (AUS)
+            </option>
+            <option value="DAL">Dallas Love Field Airport (DAL)</option>
+            <option value="LAX">Los Angeles International Airport (LAX)</option>
+            <option value="SAN">San Diego International Airport (SAN)</option>
+            <option value="SEA">
+              Seattle-Tacoma International Airport (SEA)
+            </option>
+          </select>
           <br />
-          Flight Number{" "}
-          <input type="number" name="flightNo" min={10} max={9999} />
+          Arrival Date and Time: <input type="datetime-local" name="arrival" />
           <br />
-          Departure{" "}
-          <input
-            type="datetime-locale"
-            name="departs"
-            defaultValue={defaultValue}
-          />
-          <br />
-          <input type="submit" value="Submit New Flight" />
+          <input type="submit" value="Add Destination" />
         </form>
+        <a href={`/flights/${flight._id}`}>Back to Flight Details</a>
       </div>
     );
   }

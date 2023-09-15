@@ -5,6 +5,7 @@ const Flight = require("./models/flights");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
+const methodOverride = require("method-override");
 
 // Global Configuration
 const mongoURI = process.env.MONGO_URI;
@@ -29,7 +30,7 @@ app.engine("jsx", jsxViewEngine());
 
 // Middleware
 app.use(express.urlencoded({ extended: false }));
-
+app.use(methodOverride("_method"));
 //////
 
 // Index route
@@ -58,6 +59,64 @@ app.post("/flights", async (req, res) => {
     res.status(201).redirect("/flights");
   } catch (err) {
     res.status(400).send(err);
+  }
+});
+
+// PART TWO /////////
+
+// New route for displaying flight details (Show route)
+app.get("/flights/:id", async (req, res) => {
+  try {
+    const flight = await Flight.findById(req.params.id);
+    if (!flight) {
+      return res.status(404).send("Flight not found.");
+    }
+    res.render("show", { flight });
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+///Update route
+app.put("/flights/:id", async (req, res) => {
+  try {
+    const destination = req.body;
+    const foundFlight = await Flight.findById(req.params.id);
+    foundFlight.destination.push(destination);
+    const updatedFlight = await Flight.findByIdAndUpdate(
+      req.params.id,
+      foundFlight,
+      { new: true }
+    );
+    res.status(201).redirect("/flights");
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+// Creates a new destination route
+app.post("/flights/:id/destinations", async (req, res) => {
+  try {
+    const flight = await Flight.findById(req.params.id);
+    if (!flight) {
+      return res.status(404).send("Flight not found.");
+    }
+
+    // Creates a new destination
+    const newDestination = {
+      airport: req.body.airport,
+      arrival: new Date(req.body.arrival),
+    };
+
+    // Push the new destination to the flight's destinations array
+    flight.destination.push(newDestination);
+
+    // Save the updated flight document
+    await flight.save();
+
+    res.redirect(`/flights/${flight._id}`);
+  } catch (err) {
+    res.status(500).send(err);
   }
 });
 

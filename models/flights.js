@@ -1,5 +1,7 @@
 // require Schema class and model method from Mongoose object
 const { Schema, model } = require("mongoose");
+// import destinationSchema
+const destinationSchema = require("./destination");
 
 // create a new Schema
 // defines the shape of the documents in the collection
@@ -22,6 +24,12 @@ const flightSchema = new Schema(
         return new Date().setFullYear(new Date().getFullYear() + 1);
       },
     },
+    airport: {
+      type: String,
+      enum: ["AUS", "DAL", "LAX", "SAN", "SEA"],
+      default: "SAN",
+    },
+    destination: [destinationSchema], // use the destinationSchema from model/destination.js
   },
   {
     timestamps: true,
